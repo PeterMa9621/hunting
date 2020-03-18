@@ -1,4 +1,3 @@
-const Database = require('./util/database/database');
 const express = require('express');
 
 const cors = require('cors');
@@ -16,6 +15,7 @@ app.listen(port, () => {
 });
 
 const users = require('./routes/api/users');
+const news = require('./routes/api/news');
 
 app.use('/api/users', users);
-
+app.use('/api/news', news);
