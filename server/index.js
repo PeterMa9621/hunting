@@ -16,6 +16,8 @@ app.listen(port, () => {
 
 const users = require('./routes/api/users');
 const news = require('./routes/api/news');
+const home = require('./routes/home');
 
 app.use('/api/users', users);
 app.use('/api/news', news);
+app.use('/', home);

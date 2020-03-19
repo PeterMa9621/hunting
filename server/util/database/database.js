@@ -66,6 +66,12 @@ class _Database {
         return collection.deleteOne(condition);
     }
 
+    async update(condition, newValues, collectionName) {
+        const client = await this.connect();
+        const collection = await client.db(databaseName).collection(collectionName);
+        return collection.updateOne(condition, { $set: newValues });
+    }
+
     close() {
         return new Promise((resolve, reject) => {
             try {
