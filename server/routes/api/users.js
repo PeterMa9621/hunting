@@ -77,6 +77,9 @@ router.post('/', async (req, res) => {
 
 // Login
 router.post('/login/', async (req, res) => {
+    console.log("Login start");
+    const startTime = new Date();
+
     const body = req.body;
 
     const username = body.username;
@@ -106,15 +109,33 @@ router.post('/login/', async (req, res) => {
         await database.update({ _id: username }, { session: uid }, "users");
         delete result[0].password;
         result[0]['session'] = uid;
-        res.status(200).send(result);
-    } else
+        res.status(200);
+        res.send(result);
+
+        const endTime = new Date();
+        console.log("Finish login request");
+        console.log("Time used", Math.abs(startTime - endTime));
+    } else{
         res.status(404).send("Username/password does not match anyone");
+    }
+
+
 });
 
 // Check auth by session id
 router.post('/auth', async (req, res) => {
     const body = req.body;
-    
+    const session = body.session;
+    const username = body.username;
+    const database = await Database.getInstance();
+    const result = await database.find({ session:session, _id:username, username:username }, "users");
+
+    if(result.length !== 0){
+        delete result[0].password;
+        res.status(200).send(result);
+    } else {
+        res.status(404).send({ error:"Session and username does not match" });
+    }
 });
 
 // Delete a user
