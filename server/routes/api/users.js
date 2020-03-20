@@ -111,6 +111,12 @@ router.post('/login/', async (req, res) => {
         res.status(404).send("Username/password does not match anyone");
 });
 
+// Check auth by session id
+router.post('/auth', async (req, res) => {
+    const body = req.body;
+    
+});
+
 // Delete a user
 router.delete('/:id', async (req, res) => {
      const id = req.params.id;
