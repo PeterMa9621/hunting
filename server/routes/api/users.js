@@ -33,8 +33,12 @@ router.put('/:id', async (req, res) => {
     const body = req.body;
     const database = await Database.getInstance();
     const result = await database.update({ _id: id }, body, "users");
+    if(result.result.n !== 0){
+        res.status(200).send(result);
+    } else {
+        res.status(500).send({ error:'Error occurs when update users' });
+    }
 
-    res.status(200).send(result);
 });
 
 // Add a user
