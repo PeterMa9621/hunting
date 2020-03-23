@@ -18,13 +18,13 @@ router.get('/:id', async (req, res) => {
     const id = req.params.id;
 
     const database = await Database.getInstance();
-    const result = await database.find({_id: new mongodb.ObjectID(id) }, "news");
+    const result = await database.find({id: id }, "news");
 
     res.status(200);
     res.send(result);
 });
 
-// Add a user
+// Add a news
 router.post('/', async (req, res) => {
     const body = req.body;
     const database = await Database.getInstance();
@@ -47,11 +47,11 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Delete a user
+// Delete a news
 router.delete('/:id', async (req, res) => {
     const id = req.params.id;
     const database = await Database.getInstance();
-    const result = await database.delete({ _id: new mongodb.ObjectID(id) }, "news");
+    const result = await database.delete({ id: id }, "news");
     res.status(200);
     res.send(result);
 });

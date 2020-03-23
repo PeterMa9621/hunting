@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-const QueryBuilder = require('./QueryBuilder');
+const QueryBuilder = require('./QueryBuilder/QueryBuilder');
 
 class MySqlDatabase {
     connection = null;
@@ -24,15 +24,11 @@ class MySqlDatabase {
     }
 
     async find(condition={}, tableName) {
-        let tableNames;
-        if(Array.isArray(tableName))
-            tableNames = tableName;
-        else
-            tableNames = [tableName];
-        const query = new QueryBuilder().from(tableNames).where(condition).getQuery();
-        console.log(query);
+        const query = QueryBuilder.getSelectQueryBuilder().from(tableName).where(condition).getQuery();
+        //console.log(query);
+        const conditionValue = Object.values(condition);
         return new Promise((resolve, reject) => {
-            this.connection.query(query, (error, result, fields) => {
+            this.connection.query(query, conditionValue, (error, result, fields) => {
                 if(!error){
                     resolve(JSON.parse(JSON.stringify(result)));
                 } else {
@@ -40,6 +36,61 @@ class MySqlDatabase {
                 }
             });
         })
+    }
+
+    async update(condition, newValues, tableName) {
+        const query = QueryBuilder.getUpdateQueryBuilder().from(tableName).where(condition).set(newValues).getQuery();
+        //console.log(query);
+        const values = Object.values(newValues);
+        const conditionValue = Object.values(condition);
+        return new Promise((resolve, reject) => {
+            this.connection.query(query, values.concat(conditionValue), (error, result, fields) => {
+                if(!error){
+                    result.result = {};
+                    result.result.n = result.affectedRows;
+                    //console.log(result);
+                    resolve(result);
+                } else {
+                    reject(error);
+                }
+            })
+        });
+    }
+
+    async insert(doc, tableName, uniqueKeys=null) {
+        const query = QueryBuilder.getInsertQueryBuilder().from(tableName).column(doc).getQuery();
+        const values = Object.values(doc);
+        //console.log(query);
+        return new Promise((resolve, reject) => {
+            this.connection.query(query, values, (error, result, fields) => {
+                if(!error){
+                    result.result = {};
+                    result.result.n = result.affectedRows;
+                    //console.log(result);
+                    resolve(result);
+                } else {
+                    reject(error);
+                }
+            });
+        });
+    }
+
+    async delete(condition, tableName) {
+        const query = QueryBuilder.getDeleteQueryBuilder().from(tableName).where(condition).getQuery();
+        const conditionValue = Object.values(condition);
+
+        return new Promise((resolve, reject) => {
+            this.connection.query(query, conditionValue, (error, result, fields) => {
+                if(!error){
+                    result.result = {};
+                    result.result.n = result.affectedRows;
+                    //console.log(result);
+                    resolve(result);
+                } else {
+                    reject(error);
+                }
+            });
+        });
     }
 }
 

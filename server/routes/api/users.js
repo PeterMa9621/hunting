@@ -1,6 +1,7 @@
 const express = require('express');
 const mongodb = require('mongodb');
 const crypto = require('crypto');
+const Util = require('../../util/Util');
 const Database = require('../../util/database/database');
 
 const router = express.Router();
@@ -31,6 +32,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const id = req.params.id;
     const body = req.body;
+    body['updated_at'] = Util.getMySQLFormatDateTime();
     const database = await Database.getInstance();
     const result = await database.update({ username: id }, body, "users");
     if(result.result.n !== 0){
@@ -61,14 +63,15 @@ router.post('/', async (req, res) => {
     hash.update(body.password);
     const hashPassword = hash.digest('hex');
 
+    const currentDateTime = Util.getMySQLFormatDateTime();
+
     const doc = {
         username: body.username,
-        username: body.username,
-        email: body.email,
-        created_at: new Date(),
-        updated_at: new Date(),
+        email: body.email===undefined ? "" : body.email,
+        created_at: currentDateTime,
+        updated_at: currentDateTime,
         password: hashPassword,
-        session: 'null'
+        session: ''
     };
 
     const result = await database.insert(doc,"users", {username: body.username});
@@ -146,7 +149,7 @@ router.post('/auth', async (req, res) => {
 router.delete('/:id', async (req, res) => {
      const id = req.params.id;
      const database = await Database.getInstance();
-     const result = await database.delete({ username: new mongodb.ObjectID(id) }, "users");
+     const result = await database.delete({ username: id }, "users");
      res.status(200);
      res.send(result);
 });
