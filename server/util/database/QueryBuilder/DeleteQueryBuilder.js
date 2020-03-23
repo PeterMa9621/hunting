@@ -1,15 +1,15 @@
 const QueryBuilderBase = require('./QueryBuilderBase');
 
-class SelectQueryBuilder extends QueryBuilderBase{
+class DeleteQueryBuilder extends QueryBuilderBase{
 
-    _select = "SELECT * ";
+    _delete = "DELETE ";
 
     getQuery(){
         if(this.hasWhere)
-            return this._select + this._from + this._where;
+            return this._delete + this._from + this._where;
         else
-            return this._select + this._from;
+            return this._delete + this._from;
     }
 }
 
-module.exports = SelectQueryBuilder;
+module.exports = DeleteQueryBuilder;
