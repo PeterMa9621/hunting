@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const id = req.params.id;
     const database = await Database.getInstance();
-    const result = await database.find({ _id: id }, "users");
+    const result = await database.find({ username: id }, "users");
 
     res.status(200);
     res.send(result);
@@ -32,7 +32,7 @@ router.put('/:id', async (req, res) => {
     const id = req.params.id;
     const body = req.body;
     const database = await Database.getInstance();
-    const result = await database.update({ _id: id }, body, "users");
+    const result = await database.update({ username: id }, body, "users");
     if(result.result.n !== 0){
         res.status(200).send(result);
     } else {
@@ -62,7 +62,7 @@ router.post('/', async (req, res) => {
     const hashPassword = hash.digest('hex');
 
     const doc = {
-        _id: body.username,
+        username: body.username,
         username: body.username,
         email: body.email,
         created_at: new Date(),
@@ -105,12 +105,12 @@ router.post('/login/', async (req, res) => {
     hash.update(password);
     const hashPassword = hash.digest('hex');
 
-    const result = await database.find({ _id: username, username: username, password: hashPassword }, "users");
+    const result = await database.find({ username: username, username: username, password: hashPassword }, "users");
 
     if(result.length !== 0) {
         const uid = uuid.v4();
         console.log("UUID is", uid);
-        await database.update({ _id: username }, { session: uid }, "users");
+        await database.update({ username: username }, { session: uid }, "users");
         delete result[0].password;
         result[0]['session'] = uid;
         res.status(200);
@@ -132,7 +132,7 @@ router.post('/auth', async (req, res) => {
     const session = body.session;
     const username = body.username;
     const database = await Database.getInstance();
-    const result = await database.find({ session:session, _id:username, username:username }, "users");
+    const result = await database.find({ session:session, username:username, username:username }, "users");
 
     if(result.length !== 0){
         delete result[0].password;
@@ -146,7 +146,7 @@ router.post('/auth', async (req, res) => {
 router.delete('/:id', async (req, res) => {
      const id = req.params.id;
      const database = await Database.getInstance();
-     const result = await database.delete({ _id: new mongodb.ObjectID(id) }, "users");
+     const result = await database.delete({ username: new mongodb.ObjectID(id) }, "users");
      res.status(200);
      res.send(result);
 });
