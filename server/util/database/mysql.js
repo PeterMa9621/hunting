@@ -46,6 +46,7 @@ class MySqlDatabase {
         return new Promise((resolve, reject) => {
             this.connection.query(query, values.concat(conditionValue), (error, result, fields) => {
                 if(!error){
+                    // Do this aims to make data abstract layer to be compatible with mongodb
                     result.result = {};
                     result.result.n = result.affectedRows;
                     //console.log(result);
@@ -64,6 +65,7 @@ class MySqlDatabase {
         return new Promise((resolve, reject) => {
             this.connection.query(query, values, (error, result, fields) => {
                 if(!error){
+                    // Do this aims to make data abstract layer to be compatible with mongodb
                     result.result = {};
                     result.result.n = result.affectedRows;
                     //console.log(result);
@@ -82,6 +84,7 @@ class MySqlDatabase {
         return new Promise((resolve, reject) => {
             this.connection.query(query, conditionValue, (error, result, fields) => {
                 if(!error){
+                    // Do this aims to make data abstract layer to be compatible with mongodb
                     result.result = {};
                     result.result.n = result.affectedRows;
                     //console.log(result);

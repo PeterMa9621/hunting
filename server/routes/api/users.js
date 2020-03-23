@@ -1,5 +1,4 @@
 const express = require('express');
-const mongodb = require('mongodb');
 const crypto = require('crypto');
 const Util = require('../../util/Util');
 const Database = require('../../util/database/database');
@@ -108,7 +107,7 @@ router.post('/login/', async (req, res) => {
     hash.update(password);
     const hashPassword = hash.digest('hex');
 
-    const result = await database.find({ username: username, username: username, password: hashPassword }, "users");
+    const result = await database.find({ username: username, password: hashPassword }, "users");
 
     if(result.length !== 0) {
         const uid = uuid.v4();
@@ -135,7 +134,7 @@ router.post('/auth', async (req, res) => {
     const session = body.session;
     const username = body.username;
     const database = await Database.getInstance();
-    const result = await database.find({ session:session, username:username, username:username }, "users");
+    const result = await database.find({ session:session, username:username }, "users");
 
     if(result.length !== 0){
         delete result[0].password;
@@ -153,11 +152,5 @@ router.delete('/:id', async (req, res) => {
      res.status(200);
      res.send(result);
 });
-
-async function getCollection(){
-    const client = await Database.getInstance();
-
-    return await client.db('hunting').collection('users');
-}
 
 module.exports = router;

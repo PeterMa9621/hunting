@@ -1,13 +1,14 @@
 const express = require('express');
-const mongodb = require('mongodb');
 const Database = require('../../util/database/database');
-
+const Util = require('../../util/Util');
 const router = express.Router();
+
+const tableName = "news";
 
 // Get all news
 router.get('/', async (req, res) => {
     const database = await Database.getInstance();
-    const result = await database.find({}, "news");
+    const result = await database.find({}, tableName);
 
     res.status(200);
     res.send(result);
@@ -18,7 +19,7 @@ router.get('/:id', async (req, res) => {
     const id = req.params.id;
 
     const database = await Database.getInstance();
-    const result = await database.find({id: id }, "news");
+    const result = await database.find({id: id }, tableName);
 
     res.status(200);
     res.send(result);
@@ -27,6 +28,7 @@ router.get('/:id', async (req, res) => {
 // Add a news
 router.post('/', async (req, res) => {
     const body = req.body;
+    console.log(body);
     const database = await Database.getInstance();
 
     const result = await database.insert({
@@ -47,19 +49,28 @@ router.post('/', async (req, res) => {
     }
 });
 
+// Update a news
+router.put('/:id', async (req, res) => {
+    const id = req.params.id;
+    const body = req.body;
+    body['updated_at'] = Util.getMySQLFormatDateTime();
+    const database = await Database.getInstance();
+    const result = await database.update({ id:id }, body, tableName);
+
+    if(result.result.n !== 0){
+        res.status(200).send(result);
+    } else {
+        res.status(500).send({error: "Error when editing news"});
+    }
+});
+
 // Delete a news
 router.delete('/:id', async (req, res) => {
     const id = req.params.id;
     const database = await Database.getInstance();
-    const result = await database.delete({ id: id }, "news");
+    const result = await database.delete({ id: id }, tableName);
     res.status(200);
     res.send(result);
 });
-
-async function getCollection(){
-    const client = await Database.getInstance();
-
-    return await client.db('hunting').collection('news');
-}
 
 module.exports = router;
