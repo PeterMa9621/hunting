@@ -18,13 +18,15 @@ class MySqlDatabase {
                     throw err;
                 }
             });
-
         }
         return this.connection;
     }
 
-    async find(condition={}, tableName) {
-        const query = QueryBuilder.getSelectQueryBuilder().from(tableName).where(condition).getQuery();
+    async find(condition={}, tableName, orderBy={}) {
+        let queryBuilder = QueryBuilder.getSelectQueryBuilder().from(tableName).where(condition);
+        if(Object.keys(orderBy).length > 0)
+            queryBuilder = queryBuilder.orderBy(orderBy);
+        const query = queryBuilder.getQuery();
         //console.log(query);
         const conditionValue = Object.values(condition);
         return new Promise((resolve, reject) => {

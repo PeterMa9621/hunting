@@ -8,7 +8,7 @@ const tableName = "news";
 // Get all news
 router.get('/', async (req, res) => {
     const database = await Database.getInstance();
-    const result = await database.find({}, tableName);
+    const result = await database.find({}, tableName, {by:'created_at', order:'DESC'});
 
     res.status(200);
     res.send(result);
