@@ -28,7 +28,7 @@ router.get('/:id', async (req, res) => {
 // Add a news
 router.post('/', async (req, res) => {
     const body = req.body;
-    console.log(body);
+    //console.log(body);
     const database = await Database.getInstance();
 
     const result = await database.insert({
