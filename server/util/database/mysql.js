@@ -8,7 +8,7 @@ class MySqlDatabase {
         if(this.connection == null){
             this.connection = mysql.createConnection({
                 host     : 'localhost',
-                user     : 'root',
+                user     : 'mjy',
                 password : 'mjy159357',
                 database : 'hunting'
             });
