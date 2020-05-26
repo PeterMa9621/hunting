@@ -1,7 +1,7 @@
 const MongoDatabase = require('./mongodb');
 const MySqlDatabase = require('./mysql');
 
-const databaseType = 'mysql';
+const databaseType = 'mongodb';
 
 class Database {
 
